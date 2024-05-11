@@ -36,7 +36,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -48,4 +47,6 @@ dependencies {
     implementation (libs.gson)
     implementation (libs.converter.gson)
     implementation(libs.volley)
+    implementation (libs.picasso.v28)
+    implementation (libs.subsampling.scale.image.view)
 }
