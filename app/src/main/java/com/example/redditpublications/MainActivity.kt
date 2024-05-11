@@ -1,18 +1,23 @@
 package com.example.redditpublications
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.redditpublications.adapter.RedditAdapter
 import com.example.redditpublications.model.RedditModel
 import org.json.JSONObject
 
 class MainActivity : AppCompatActivity() {
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -41,13 +46,16 @@ class MainActivity : AppCompatActivity() {
                 error -> Log.d("MyLog", "Error: $error")
             }
         )
-
         queue.add(request)
     }
 
     private fun parseResponseData(result: String) {
         val mainObject = JSONObject(result)
+        val publicationsList: RecyclerView = findViewById(R.id.publicationsList)
         val publications = parseRedditPublications(mainObject)
+
+        publicationsList.layoutManager = LinearLayoutManager(this)
+        publicationsList.adapter = RedditAdapter(publications, this)
     }
 
     private fun parseRedditPublications(mainObject: JSONObject): List<RedditModel> {
@@ -58,10 +66,10 @@ class MainActivity : AppCompatActivity() {
         for (i in 0 until publications.length()) {
             val publication = publications[i] as JSONObject
             val item = RedditModel(
-                publication.getJSONObject("data").getString("author_fullname"),
-                parseCreatedTime(publication),
+                "Author: " + publication.getJSONObject("data").getString("author_fullname"),
+                "Created date: " + parseCreatedTime(publication),
                 publication.getJSONObject("data").getString("thumbnail"),
-                publication.getJSONObject("data").getInt("num_comments")
+                "Comments: " + publication.getJSONObject("data").getInt("num_comments").toString()
             )
             resultPublications.add(item)
         }
